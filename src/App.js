@@ -11,6 +11,8 @@ const Country = (({country}) => {
     <p>Population: {country.population}</p>
     <h2>Languages</h2>
     {languages.map(language => <li key = {language}>{country.languages[language]}</li>)}
+    <h2>flag</h2>
+    <img src = {country.flags.png} width  = '400px' height = '200px'/>
   </>
   )
 })
