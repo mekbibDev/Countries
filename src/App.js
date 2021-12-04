@@ -2,6 +2,7 @@ import React, {useState,useEffect} from "react";
 import axios from "axios";
 
 const Search =  ({onChange,value}) => <input onChange = {onChange} value = {value}/>
+const Button = ({onClick,name}) => <button key = {Math.random()} onClick = {onClick} value = {name}>show</button>
 const Country = (({country}) => {
   const languages = Object.keys(country.languages);
   return (
@@ -16,7 +17,7 @@ const Country = (({country}) => {
   </>
   )
 })
-const Countries = (({countries}) =>{
+const Countries = (({countries,filterCountriesByButton}) =>{
   if (countries.length > 10)
   return(
     <>
@@ -35,7 +36,12 @@ const Countries = (({countries}) =>{
     )
   else return(
     <div>
-      {countries.map(country =><li key ={country.name.common}>{country.name.common}</li>)}
+      {countries.map(country =>
+      {return(<div key ={country.name.common}>
+              <li >{country.name.common}</li>
+              <Button  onClick = {filterCountriesByButton} name = {country.name.common}/>
+              </div>)
+         })}
     </div>
   )
 })
@@ -58,6 +64,10 @@ function App() {
     else
       return;
   }
+
+  const filterCountriesByButton = (e) => {
+    filterCountries(e.target.value);
+  }
   useEffect(()=>{
     axios
         .get('https://restcountries.com/v3.1/all')
@@ -69,7 +79,7 @@ function App() {
   return (
     <div>
       Search By: <Search onChange = {searchBy} value = {filter} />
-      <Countries countries = {filteredCountires}/>
+      <Countries countries = {filteredCountires} filterCountriesByButton = {filterCountriesByButton}/>
     </div>
   );
 }
