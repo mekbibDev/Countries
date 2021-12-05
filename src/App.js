@@ -1,6 +1,16 @@
 import React, {useState,useEffect} from "react";
 import axios from "axios";
 
+const Weather = ({capital}) => {
+      return(
+        <div>
+          <h2>Weather in {capital.name}</h2>
+          <p>Description: {capital.weather[0].description} </p>
+          <p>Temprature: {capital.main.temp} kelvin</p>
+          <p>Wind: {capital.wind.speed} speed</p>
+        </div>
+      )
+}
 const Search =  ({onChange,value}) => <input onChange = {onChange} value = {value}/>
 const Button = ({onClick,name}) => <button key = {Math.random()} onClick = {onClick} value = {name}>show</button>
 const Country = (({country}) => {
@@ -17,7 +27,7 @@ const Country = (({country}) => {
   </>
   )
 })
-const Countries = (({countries,filterCountriesByButton}) =>{
+const Countries = (({countries,filterCountriesByButton,capital}) =>{
   if (countries.length > 10)
   return(
     <>
@@ -32,7 +42,10 @@ const Countries = (({countries,filterCountriesByButton}) =>{
     )
   else if (countries.length === 1)
     return(
-      <Country country = {countries[0]} />
+      <>
+        <Country country = {countries[0]} />
+        <Weather capital = {capital} />
+      </>
     )
   else return(
     <div>
@@ -46,20 +59,25 @@ const Countries = (({countries,filterCountriesByButton}) =>{
   )
 })
 function App() {
+  const api_key = process.env.REACT_APP_API_KEY;
   const [countries,setCountries] = useState('');
+  const [capital,setCapital] = useState('');
   const [filter,setFilter] = useState('');
   const [filteredCountires,setFilteredCountries] = useState('');
   const searchBy = (e) =>{
     setFilter(e.target.value)
     filterCountries(e.target.value)
     
+    
   }
   const filterCountries = (name) => {
     if (countries !== ''){
-      setFilteredCountries(countries.filter(country =>
+      const filtered = countries.filter(country =>
         country.name.common
         .toLowerCase()
-        .includes(name.toLowerCase())))
+        .includes(name.toLowerCase()))
+      setFilteredCountries(filtered)
+      setToCapital(filtered);
     }
     else
       return;
@@ -67,6 +85,18 @@ function App() {
 
   const filterCountriesByButton = (e) => {
     filterCountries(e.target.value);
+  }
+
+  const setToCapital = (filtered) => {
+    if (filtered.length === 1)
+    {
+      axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${filtered[0].capital}&appid=${api_key}`)
+           .then(response =>{
+             console.log(response.data)
+             setCapital(response.data)
+            })
+    }
+      
   }
   useEffect(()=>{
     axios
@@ -79,7 +109,7 @@ function App() {
   return (
     <div>
       Search By: <Search onChange = {searchBy} value = {filter} />
-      <Countries countries = {filteredCountires} filterCountriesByButton = {filterCountriesByButton}/>
+      <Countries countries = {filteredCountires} filterCountriesByButton = {filterCountriesByButton} capital = {capital}/>
     </div>
   );
 }
