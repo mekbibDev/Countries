@@ -2,6 +2,7 @@ import React, {useState,useEffect} from "react";
 import axios from "axios";
 
 const Weather = ({capital}) => {
+    if (capital.weather)
       return(
         <div>
           <h2>Weather in {capital.name}</h2>
@@ -10,6 +11,7 @@ const Weather = ({capital}) => {
           <p>Wind: {capital.wind.speed} speed</p>
         </div>
       )
+    else return (<></>)
 }
 const Search =  ({onChange,value}) => <input onChange = {onChange} value = {value}/>
 const Button = ({onClick,name}) => <button key = {Math.random()} onClick = {onClick} value = {name}>show</button>
