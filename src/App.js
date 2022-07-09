@@ -86,7 +86,10 @@ function App() {
   }
 
   const filterCountriesByButton = (e) => {
-    filterCountries(e.target.value);
+    const filtered = countries.filter(country =>
+      country.name.common.toLowerCase() === e.target.value.toLowerCase())
+    setFilteredCountries(filtered)
+    setToCapital(filtered);
   }
 
   const setToCapital = (filtered) => {
